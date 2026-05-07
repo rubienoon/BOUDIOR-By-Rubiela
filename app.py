@@ -1,53 +1,65 @@
 import streamlit as st
 
-# 💖 PAGE SETTINGS
+# 💎 BOUDIOR by Rubiela - Aesthetic Boutique Website
+
 st.set_page_config(
     page_title="BOUDIOR by Rubiela",
     page_icon="💎",
     layout="wide"
 )
 
-# 🎀 HEADER
+# 🎨 CUSTOM AESTHETIC THEME (COLORS)
 st.markdown("""
-    <div style='text-align:center; padding:20px;'>
-        <h1 style='color:#8b0000; font-size:60px;'>BOUDIOR</h1>
-        <h3>by Rubiela</h3>
-        <p style='color:gray; font-style:italic;'>Soft elegance. Bold identity.</p>
-    </div>
+<style>
+    .main {
+        background-color: #fff7f7;
+    }
+    h1, h2, h3 {
+        color: #8b0000;
+    }
+    .stButton button {
+        background-color: #8b0000;
+        color: white;
+        border-radius: 10px;
+        padding: 10px;
+    }
+</style>
 """, unsafe_allow_html=True)
+
+# 🖼️ LOGO UPLOAD (OPTIONAL)
+logo = st.file_uploader("Upload your boutique logo 💖", type=["png", "jpg", "jpeg"])
+
+if logo:
+    st.image(logo, width=180)
+else:
+    st.markdown("<h2 style='text-align:center;'>BOUDIOR</h2>", unsafe_allow_html=True)
+
+st.markdown("<p style='text-align:center;'>by Rubiela</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:gray; font-style:italic;'>Soft elegance. Bold identity.</p>", unsafe_allow_html=True)
 
 st.divider()
 
 # 🛍 CATEGORIES
 st.subheader("🛍 Shop Categories")
-
 categories = ["Party Wear", "Formals", "T-Shirts", "Jewellery"]
-
 cols = st.columns(4)
-
 for i, cat in enumerate(categories):
     with cols[i]:
         st.button(cat)
 
 st.divider()
 
-# 💍 OXIDISED JEWELLERY
+# 💍 JEWELLERY SECTION
 st.subheader("💍 Oxidised Jewellery Collection")
-
 cols2 = st.columns(3)
-
 for i in range(3):
     with cols2[i]:
-        st.image(
-            "https://via.placeholder.com/250x250.png?text=BOUDIOR+Product",
-            caption="Elegant Piece"
-        )
+        st.image("https://via.placeholder.com/250x250.png?text=BOUDIOR+Product", caption="Elegant Piece")
 
 st.divider()
 
-# 👗 PARTY WEAR SECTION
+# 👗 PARTY WEAR
 st.subheader("👗 Party Wear")
-
 st.write("Luxury aesthetic party wear collection for elegant looks ✨")
 
 st.divider()
@@ -71,8 +83,4 @@ with st.form("order_form"):
 st.divider()
 
 # 📞 FOOTER
-st.markdown("""
-    <div style='text-align:center; color:gray; padding:10px;'>
-        © 2026 BOUDIOR by Rubiela | All Rights Reserved
-    </div>
-""", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:gray;'>© 2026 BOUDIOR by Rubiela | All Rights Reserved</p>", unsafe_allow_html=True)
