@@ -1,86 +1,133 @@
 import streamlit as st
+import datetime
+import csv
+import os
 
-# 💎 BOUDIOR by Rubiela - Aesthetic Boutique Website
+# 💎 BOUDIOR by Rubiela - FINAL PRO BUSINESS VERSION
 
-st.set_page_config(
-    page_title="BOUDIOR by Rubiela",
-    page_icon="💎",
-    layout="wide"
-)
+st.set_page_config(page_title="BOUDIOR by Rubiela", page_icon="💎", layout="wide")
 
-# 🎨 CUSTOM AESTHETIC THEME (COLORS)
+# 📦 FILE STORAGE (simple database)
+FILE = "orders.csv"
+
+if not os.path.exists(FILE):
+    with open(FILE, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Name", "WhatsApp", "Product", "Size", "Address", "Time"])
+
+# 📦 SESSION
+if "orders" not in st.session_state:
+    st.session_state.orders = []
+
+# 🎨 STYLE
 st.markdown("""
 <style>
-    .main {
-        background-color: #fff7f7;
-    }
-    h1, h2, h3 {
-        color: #8b0000;
-    }
-    .stButton button {
-        background-color: #8b0000;
-        color: white;
-        border-radius: 10px;
-        padding: 10px;
-    }
+.main {
+    background-color: #fff7f7;
+}
+h1, h2, h3 {
+    color: #8b0000;
+}
+.stButton button {
+    background-color: #8b0000;
+    color: white;
+    border-radius: 10px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# 🖼️ LOGO UPLOAD (OPTIONAL)
-logo = st.file_uploader("Upload your boutique logo 💖", type=["png", "jpg", "jpeg"])
+# 🧭 NAVIGATION
+page = st.sidebar.radio("BOUDIOR MENU", ["Home", "Shop", "Order", "Admin"])
 
-if logo:
-    st.image(logo, width=180)
-else:
-    st.markdown("<h2 style='text-align:center;'>BOUDIOR</h2>", unsafe_allow_html=True)
+# 🏠 HOME
+if page == "Home":
+    st.title("💎 BOUDIOR by Rubiela")
+    st.write("Luxury Boutique • Soft Elegance • Bold Identity")
+    st.image("https://via.placeholder.com/1000x300.png?text=BOUDIOR+LUXURY+STORE")
 
-st.markdown("<p style='text-align:center;'>by Rubiela</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:gray; font-style:italic;'>Soft elegance. Bold identity.</p>", unsafe_allow_html=True)
+# 🛍 SHOP
+elif page == "Shop":
+    st.header("🛍 Collection")
 
-st.divider()
+    st.subheader("Categories")
+    st.write("Party Wear | Formals | T-Shirts | Oxidised Jewellery")
 
-# 🛍 CATEGORIES
-st.subheader("🛍 Shop Categories")
-categories = ["Party Wear", "Formals", "T-Shirts", "Jewellery"]
-cols = st.columns(4)
-for i, cat in enumerate(categories):
-    with cols[i]:
-        st.button(cat)
+    col1, col2, col3 = st.columns(3)
 
-st.divider()
+    with col1:
+        st.image("https://via.placeholder.com/250")
+        st.write("Party Wear Dress 💃")
 
-# 💍 JEWELLERY SECTION
-st.subheader("💍 Oxidised Jewellery Collection")
-cols2 = st.columns(3)
-for i in range(3):
-    with cols2[i]:
-        st.image("https://via.placeholder.com/250x250.png?text=BOUDIOR+Product", caption="Elegant Piece")
+    with col2:
+        st.image("https://via.placeholder.com/250")
+        st.write("Formal Wear 🤍")
 
-st.divider()
+    with col3:
+        st.image("https://via.placeholder.com/250")
+        st.write("Jewellery 💍")
 
-# 👗 PARTY WEAR
-st.subheader("👗 Party Wear")
-st.write("Luxury aesthetic party wear collection for elegant looks ✨")
+# 🛒 ORDER SYSTEM
+elif page == "Order":
+    st.header("🛒 Place Your Order")
 
-st.divider()
+    with st.form("order_form"):
+        name = st.text_input("Full Name")
+        whatsapp = st.text_input("WhatsApp Number")
+        product = st.text_input("Product Name")
+        size = st.text_input("Size")
+        address = st.text_area("Full Address")
 
-# 🛒 ORDER FORM
-st.subheader("🛒 Order / Inquiry Form")
+        submit = st.form_submit_button("Confirm Order 💖")
 
-with st.form("order_form"):
-    name = st.text_input("Full Name")
-    whatsapp = st.text_input("WhatsApp Number")
-    product = st.text_input("Product Name")
-    size = st.text_input("Size")
-    address = st.text_area("Full Address")
-    notes = st.text_area("Extra Notes")
+        if submit:
+            time = str(datetime.datetime.now())
 
-    submit = st.form_submit_button("Submit Order 💖")
+            # SAVE TO CSV (REAL DATABASE)
+            with open(FILE, "a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow([name, whatsapp, product, size, address, time])
 
-    if submit:
-        st.success("Your order has been received 💖 We will contact you on WhatsApp soon!")
+            # STORE IN SESSION
+            st.session_state.orders.append({
+                "name": name,
+                "whatsapp": whatsapp,
+                "product": product,
+                "size": size,
+                "address": address,
+                "time": time
+            })
 
-st.divider()
+            # WhatsApp message link
+            msg = f"Hello BOUDIOR, I want to order:\nProduct: {product}\nName: {name}\nSize: {size}\nAddress: {address}"
+            wa_link = f"https://wa.me/923000000000?text={msg}"
+
+            st.success("Order placed successfully 💖")
+            st.markdown(f"👉 Send WhatsApp confirmation: [Click Here]({wa_link})")
+
+# 🔐 ADMIN PANEL
+elif page == "Admin":
+    st.header("🔐 Admin Dashboard")
+
+    password = st.text_input("Enter Admin Password", type="password")
+
+    if password == "BOUDIOR2026":
+        st.success("Welcome Admin 💼")
+
+        st.subheader("📦 Live Orders (CSV Database)")
+
+        try:
+            with open(FILE, "r") as f:
+                reader = csv.reader(f)
+                data = list(reader)
+
+            for row in data[1:]:
+                st.write(row)
+        except:
+            st.warning("No orders found")
+
+    else:
+        st.info("Enter password to view dashboard")
 
 # 📞 FOOTER
-st.markdown("<p style='text-align:center; color:gray;'>© 2026 BOUDIOR by Rubiela | All Rights Reserved</p>", unsafe_allow_html=True)
+st.divider()
+st.markdown("<p style='text-align:center;color:gray;'>© 2026 BOUDIOR by Rubiela | FINAL PRO BUSINESS SYSTEM</p>", unsafe_allow_html=True)
